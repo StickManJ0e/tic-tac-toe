@@ -11,6 +11,6 @@
     grid-auto-rows: 1fr;
 }
 
-.selected-square {
+.disabled {
     pointer-events: none;
 }

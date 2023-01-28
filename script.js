@@ -36,10 +36,33 @@ let gameBoardModule = () => {
 //Create Player Objects
 let Player = (mark) => {
     let getMark = () => mark;
-    let gridMarkArray = () => [];
-
-    return {getMark, gridMarkArray};
+    let gridMarkArray = [];
+    return { getMark, gridMarkArray }
 };
+
+function checkWin(array, player) {
+
+    //Create all possible winning combinations into an array
+    let winningCombinations = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+        [1, 4, 7],
+        [2, 5, 8],
+        [3, 6, 9],
+        [1, 5, 9],
+        [3, 5, 7],
+    ];
+
+    winningCombinations.some((set) => {
+        if (set.every(num => array.includes(num))) {
+            declareWinner(player);
+            return;
+        }
+        return;
+    });
+
+}
 
 function playGame() {
     //Create Game Board at game start
@@ -53,23 +76,22 @@ function playGame() {
     //Create eventlisteners for each grid square
     squares.forEach((square) => {
         square.addEventListener('click', () => {
+            let squareID = Number(square.id);
+
             square.textContent = currentPlayer.getMark();
-            square.classList.add('selected-square');
+            square.classList.add('disabled');
+            (currentPlayer.gridMarkArray).push(squareID);
+            console.log(currentPlayer.gridMarkArray);
+            checkWin(currentPlayer.gridMarkArray ,currentPlayer);
             let changeCurrentPlayer = currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
         });
     });
+};
 
-    //Create all possible winning combinations into an array
-    let winningCombinations = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9],
-        [1, 4, 7],
-        [2, 5, 8],
-        [3, 6, 9],
-        [1, 5, 9],
-        [3, 5, 7],
-    ];
+function declareWinner(player) {
+    let gameBoard = document.querySelector('.game-board');
+    gameBoard.classList.add('disabled');
+    alert(`${player} Won!`)
 };
 
 playGame();
