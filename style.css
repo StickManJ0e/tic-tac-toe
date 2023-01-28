@@ -40,3 +40,7 @@ body {
     justify-self: start;
     grid: 1 / 2 / 2 / 3;
 }
+
+.current-player {
+    background-color: red;
+}

@@ -46,14 +46,26 @@ let Player = (name, mark) => {
         playerTile.textContent = name;
         body.appendChild(playerTile);
     });
-    let playerDOM = document.querySelector(`.${domClassName}`);
 
-    return { getName, getMark, gridMarkArray, createPlayerTiles };
+    return { getName, getMark, gridMarkArray, createPlayerTiles};
 };
 
-function selectCurrentPlayer(currentPlayer) {
+function selectCurrentPlayer(currentPlayer, player1, player2) {
+let player1DOM = document.querySelector('.player-1');
+let player2DOM = document.querySelector('.player-2');
+    if (currentPlayer === player1) {
+        player1DOM.classList.remove("inactive-player");
+        player1DOM.classList.add("current-player");
+        player2DOM.classList.remove("current-player");
+        player2DOM.classList.add("inactive-player");
+        return;
+    };
 
-}
+    player2DOM.classList.add("inactive-player");
+    player2DOM.classList.add("current-player");
+    player1DOM.classList.remove("current-player");
+    player1DOM.classList.add("inactive-player");
+};
 
 function checkWin(array, player) {
 
@@ -88,6 +100,7 @@ function playGame() {
     player1.createPlayerTiles();
     player2.createPlayerTiles();
     let currentPlayer = player1;
+    selectCurrentPlayer(currentPlayer, player1, player2);
     let squares = document.querySelectorAll('.square');
 
     //Create eventlisteners for each grid square
@@ -101,6 +114,7 @@ function playGame() {
             console.log(currentPlayer.gridMarkArray);
             checkWin(currentPlayer.gridMarkArray ,currentPlayer.getName());
             let changeCurrentPlayer = currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
+            selectCurrentPlayer(currentPlayer, player1, player2);
         });
     });
 };
