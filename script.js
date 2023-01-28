@@ -38,8 +38,22 @@ let Player = (name, mark) => {
     let getName = () => name;
     let getMark = () => mark;
     let gridMarkArray = [];
-    return { getName, getMark, gridMarkArray }
+    let domClassName = String(name).toLowerCase().split(" ").join("-");
+    let createPlayerTiles = (() => {
+        let body = document.querySelector('body');
+        let playerTile = createElementWithClass("div", "player-tile");
+        playerTile.classList.add(domClassName);
+        playerTile.textContent = name;
+        body.appendChild(playerTile);
+    });
+    let playerDOM = document.querySelector(`.${domClassName}`);
+
+    return { getName, getMark, gridMarkArray, createPlayerTiles };
 };
+
+function selectCurrentPlayer(currentPlayer) {
+
+}
 
 function checkWin(array, player) {
 
@@ -68,8 +82,11 @@ function playGame() {
     //Create Game Board at game start
     let gameBoard = gameBoardModule();
     gameBoard.create();
-    let player1 = Player("Player 1", "x");
+
+    let player1 = Player("Player 1", "x", "player-1");
     let player2 = Player("Player 2", "o");
+    player1.createPlayerTiles();
+    player2.createPlayerTiles();
     let currentPlayer = player1;
     let squares = document.querySelectorAll('.square');
 

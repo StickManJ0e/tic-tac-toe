@@ -1,3 +1,12 @@
+body {
+    display: grid;
+    align-items: center;
+    height: 100vh;
+    grid-template: 1fr / repeat(2, 1fr);
+    justify-items: center;
+    column-gap: 7rem;
+}
+
 .square, 
 .game-board {
     border: 2px solid black;
@@ -9,8 +18,25 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-auto-rows: 1fr;
+    grid-area: 2 / 1 / 3 / 3;
 }
 
 .disabled {
     pointer-events: none;
+}
+
+.player-tile {
+    width: 150px;
+    height: 75px;
+    border: 2px solid black;;
+}
+
+.player-1 {
+    grid-area: 1 / 1 / 2 / 2;
+    justify-self: end;
+}
+
+.player-2 {
+    justify-self: start;
+    grid: 1 / 2 / 2 / 3;
 }
