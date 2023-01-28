@@ -1,0 +1,16 @@
+.square, 
+.game-board {
+    border: 2px solid black;
+}
+
+.game-board {
+    width: 500px;
+    height: 500px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+}
+
+.selected-square {
+    pointer-events: none;
+}
