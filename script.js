@@ -34,10 +34,11 @@ let gameBoardModule = () => {
 };
 
 //Create Player Objects
-let Player = (mark) => {
+let Player = (name, mark) => {
+    let getName = () => name;
     let getMark = () => mark;
     let gridMarkArray = [];
-    return { getMark, gridMarkArray }
+    return { getName, getMark, gridMarkArray }
 };
 
 function checkWin(array, player) {
@@ -61,15 +62,14 @@ function checkWin(array, player) {
         }
         return;
     });
-
-}
+};
 
 function playGame() {
     //Create Game Board at game start
     let gameBoard = gameBoardModule();
     gameBoard.create();
-    let player1 = Player("x");
-    let player2 = Player("o");
+    let player1 = Player("Player 1", "x");
+    let player2 = Player("Player 2", "o");
     let currentPlayer = player1;
     let squares = document.querySelectorAll('.square');
 
@@ -82,12 +82,13 @@ function playGame() {
             square.classList.add('disabled');
             (currentPlayer.gridMarkArray).push(squareID);
             console.log(currentPlayer.gridMarkArray);
-            checkWin(currentPlayer.gridMarkArray ,currentPlayer);
+            checkWin(currentPlayer.gridMarkArray ,currentPlayer.getName());
             let changeCurrentPlayer = currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
         });
     });
 };
 
+//Declare a winner function and display a end game pop up
 function declareWinner(player) {
     let gameBoard = document.querySelector('.game-board');
     gameBoard.classList.add('disabled');
