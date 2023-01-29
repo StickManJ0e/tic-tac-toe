@@ -58,6 +58,7 @@ let Player = (name, mark) => {
     return { getName, getMark, gridMarkArray, createPlayerTiles};
 };
 
+//Selects the current player based off class
 function selectCurrentPlayer(currentPlayer, player1, player2) {
 let player1DOM = document.querySelector('.player-1');
 let player2DOM = document.querySelector('.player-2');
@@ -75,6 +76,7 @@ let player2DOM = document.querySelector('.player-2');
     player1DOM.classList.add("inactive-player");
 };
 
+//Checks if a player has a winning combination set
 function checkWin(array, player) {
 
     //Create all possible winning combinations into an array
@@ -139,25 +141,57 @@ function playGame(startMenu, opponent) {
     });
 };
 
-//Declare a winner function and display a end game pop up
-function declareWinner(player) {
-    let gameBoard = document.querySelector('.game-board');
-    gameBoard.classList.add('disabled');
-    alert(`${player} Won!`)
+function restartGame(gameBoard, winScreen) {
+    let restartButton = document.querySelector('.restart-button');
+    let playerTiles = document.querySelectorAll('.player-tile');
+    restartButton.addEventListener('click', () => {
+        removeChild(gameBoard);
+        gameBoard.remove();
+        playerTiles.forEach((playerTile) => {
+            removeChild(playerTile);
+            playerTile.remove();
+        })
+        removeChild(winScreen);
+        winScreen.remove();
+        startMenuInLoad();
+    });
 };
 
-function getSelectedOpponent(player2Selection, aiSelection) {
-    let selected;
+function disableGame() {
+    let gameBoard = document.querySelector('.game-board');
+    let playerTiles = document.querySelectorAll('.player-tile');
 
+    gameBoard.classList.add('disabled');
+    gameBoard.classList.add('blurred');
+    playerTiles.forEach((playerTile) => {
+        playerTile.classList.add('blurred');
+    });
+;}
+
+//Declare a winner function and display a end game pop up
+function declareWinner(player) {
+    disableGame();
+    let body = document.querySelector('body');
+    let gameBoard = document.querySelector('.game-board')
+
+    body.appendChild(createElementWithClass("div", "win-screen"));
+    let winScreen = document.querySelector('.win-screen');
+    let winText = `${player} Won!`
+    winScreen.appendChild(createElementWithClassText("div", "win-declaration", winText));
+    winScreen.appendChild(createElementWithClassText("button", "restart-button", "Restart Game"));
+    restartGame(gameBoard, winScreen);
+};
+
+//Returns which opponent has been selected in the start menu based on class
+function getSelectedOpponent(player2Selection, aiSelection) {
     if (player2Selection.classList.contains("selectedOpponent")) {
         return selected = "player2";
     }
     return selected = "ai";
 };
 
-function startMenuInLoad() {
-
-    //Create all the start menu elements
+//Creates all the start menu elements
+function createStartMenu() {
     let body = document.querySelector('body');
     body.appendChild(createElementWithClass("div", "start-menu"));
     let startMenu = document.querySelector('.start-menu');
@@ -169,8 +203,16 @@ function startMenuInLoad() {
     player2Details.appendChild(createElementWithClassText("button", "player2-selection", "Player 2"));
     player2Details.appendChild(createElementWithClassText("button", "ai-selection", "AI"));
     startMenu.appendChild(createElementWithClassText("button", "start-game", "Start Game"));
+};
+
+//Function that creates a start menu
+function startMenuInLoad() {
+
+    createStartMenu();
+    let startMenu = document.querySelector('.start-menu');
 
     let player2Selection = document.querySelector('.player2-selection');
+    player2Selection.classList.add('selectedOpponent')
     let aiSelection = document.querySelector('.ai-selection');
     let startGameButton = document.querySelector('.start-game')
 
