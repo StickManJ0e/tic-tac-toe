@@ -77,7 +77,8 @@ let player2DOM = document.querySelector('.player-2');
 };
 
 //Checks if a player has a winning combination set
-function checkWin(array, player) {
+function checkWin(array) {
+    let win = false;
 
     //Create all possible winning combinations into an array
     let winningCombinations = [
@@ -93,11 +94,13 @@ function checkWin(array, player) {
 
     winningCombinations.some((set) => {
         if (set.every(num => array.includes(num))) {
-            declareWinner(player);
+            win = true;
             return;
         }
         return;
     });
+
+    return win;
 };
 
 function removeChild(parent) {
@@ -134,7 +137,13 @@ function playGame(startMenu, opponent) {
             square.classList.add('disabled');
             (currentPlayer.gridMarkArray).push(squareID);
             console.log(currentPlayer.gridMarkArray);
-            checkWin(currentPlayer.gridMarkArray ,currentPlayer.getName());
+
+            let winState = checkWin(currentPlayer.gridMarkArray);
+            console.log((checkWin(currentPlayer.gridMarkArray)));
+            if (winState === true) {
+                declareWinner(currentPlayer.getName());
+                return;
+            };
             let changeCurrentPlayer = currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
             selectCurrentPlayer(currentPlayer, player1, player2);
         });
