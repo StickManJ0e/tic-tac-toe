@@ -64,7 +64,7 @@ let Player = (name, mark) => {
 };
 
 //Selects the current player based off class
-function selectCurrentPlayer(currentPlayer, player1, player2) {
+function selectCurrentPlayer(currentPlayer, player1) {
 let player1DOM = document.querySelector('.player-1');
 let player2DOM = document.querySelector('.player-2');
     if (currentPlayer === player1) {
@@ -73,17 +73,29 @@ let player2DOM = document.querySelector('.player-2');
         player2DOM.classList.remove("current-player");
         player2DOM.classList.add("inactive-player");
         return;
-    };
+    }
 
-    player2DOM.classList.add("inactive-player");
+    player2DOM.classList.remove("inactive-player");
     player2DOM.classList.add("current-player");
     player1DOM.classList.remove("current-player");
     player1DOM.classList.add("inactive-player");
+    return;
+};
+
+function checkAllSelected(squares) {
+    let gameBoard = document.querySelector('.game-board');
+    let result = false;
+    if (gameBoard.children.length === gameBoard.querySelectorAll('.selected-square').length) {
+        result = true;
+        return result;
+    }
+    return result;
 };
 
 //Checks if a player has a winning combination set
 function checkWin(array) {
     let win = false;
+    let squares = document.querySelectorAll('.squares');
 
     //Create all possible winning combinations into an array
     let winningCombinations = [
@@ -97,13 +109,30 @@ function checkWin(array) {
         [3, 5, 7],
     ];
 
-    winningCombinations.some((set) => {
-        if (set.every(num => array.includes(num))) {
-            win = true;
+    function checkIfWin() {
+        let state = false;
+        winningCombinations.some((set) => {
+            if (set.every(num => array.includes(num))) {
+                console.log("contains");
+                state = true;
+                return state;
+            }
+            console.log("not contains");
             return;
-        }
-        return;
-    });
+        })
+        return state;
+    };
+
+    if  (checkIfWin() === true) {
+        console.log(win);
+        win = true;
+        return win;
+    }
+
+    else if (checkAllSelected(squares) === true && checkIfWin() === false) {
+        win = "tie";
+        return win;
+    }
 
     return win;
 };
@@ -126,11 +155,11 @@ function playGame(startMenu, opponent) {
     let player1 = Player("Player 1", "x", "player-1");
     // let player2 = Player("Player 2", "o");
 
-    let player2 = ((opponent === "player2") ? Player("Player 2", "o") : console.log("Ai chosen"));
+    let player2 = ((opponent === "player2") ? Player("Player 2", "o", "player-2") : console.log("Ai chosen"));
     player1.createPlayerTiles();
     player2.createPlayerTiles();
     let currentPlayer = player1;
-    selectCurrentPlayer(currentPlayer, player1, player2);
+    selectCurrentPlayer(currentPlayer, player1);
     let squares = document.querySelectorAll('.square');
 
     //Create eventlisteners for each grid square
@@ -142,16 +171,22 @@ function playGame(startMenu, opponent) {
             square.classList.add(String(turnToClass(currentPlayer.getName())));
             square.classList.add('selected-square');
             (currentPlayer.gridMarkArray).push(squareID);
-            console.log(currentPlayer.gridMarkArray);
 
             let winState = checkWin(currentPlayer.gridMarkArray);
-            console.log((checkWin(currentPlayer.gridMarkArray)));
-            if (winState === true) {
+            console.log(winState);
+            if (winState === "tie") {
+                declareTie();
+                return;
+            }
+            
+            else if (winState === true) {
                 declareWinner(currentPlayer.getName());
                 return;
-            };
-            let changeCurrentPlayer = currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
-            selectCurrentPlayer(currentPlayer, player1, player2);
+            }
+
+            let changeCurrentPlayer = (currentPlayer === player1) ? (currentPlayer = player2) : (currentPlayer = player1);
+            selectCurrentPlayer(currentPlayer, player1);
+            return;
         });
     });
 };
@@ -181,7 +216,20 @@ function disableGame() {
     playerTiles.forEach((playerTile) => {
         playerTile.classList.add('blurred');
     });
-;}
+};
+
+function declareTie() {
+    disableGame();
+    let body = document.querySelector('body');
+    let gameBoard = document.querySelector('.game-board')
+
+    body.appendChild(createElementWithClass("div", "win-screen"));
+    let winScreen = document.querySelector('.win-screen');
+    let winText = `You tied`;
+    winScreen.appendChild(createElementWithClassText("div", "win-declaration", winText));
+    winScreen.appendChild(createElementWithClassText("button", "restart-button", "Restart Game"));
+    restartGame(gameBoard, winScreen);
+}
 
 //Declare a winner function and display a end game pop up
 function declareWinner(player) {
