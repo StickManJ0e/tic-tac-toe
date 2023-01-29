@@ -65,9 +65,11 @@ let Player = (name, mark) => {
 
 //Selects the current player based off class
 function selectCurrentPlayer(currentPlayer, player1) {
-let player1DOM = document.querySelector('.player-1');
-let player2DOM = document.querySelector('.player-2');
+    let player1DOM = document.querySelector('.player-1.player-tile');
+    let player2DOM = document.querySelector('.player-2.player-tile');
+
     if (currentPlayer === player1) {
+        console.log("p1 switch");
         player1DOM.classList.remove("inactive-player");
         player1DOM.classList.add("current-player");
         player2DOM.classList.remove("current-player");
@@ -75,11 +77,11 @@ let player2DOM = document.querySelector('.player-2');
         return;
     }
 
+    console.log("p2 switch");
     player2DOM.classList.remove("inactive-player");
     player2DOM.classList.add("current-player");
     player1DOM.classList.remove("current-player");
     player1DOM.classList.add("inactive-player");
-    return;
 };
 
 function checkAllSelected(squares) {
