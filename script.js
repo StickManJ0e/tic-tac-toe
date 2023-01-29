@@ -4,6 +4,14 @@ function createElementWithClass(elementType, className) {
     return element;
 }
 
+function createElementWithClassText(elementType, className, text) {
+    let element = document.createElement(elementType);
+    element.classList.add(className);
+    element.textContent = text;
+    return element;
+}
+
+
 //Create a squares object
 function Squares(number) {
     this.gridNumber = number;
@@ -90,13 +98,25 @@ function checkWin(array, player) {
     });
 };
 
-function playGame() {
+function removeChild(parent) {
+    let firstChild = parent.firstElementChild;
+    while (firstChild) {
+        firstChild.remove();
+        firstChild = parent.firstElementChild;
+    };
+};
+
+function playGame(startMenu, opponent) {
     //Create Game Board at game start
+    removeChild(startMenu);
+    startMenu.remove();
     let gameBoard = gameBoardModule();
     gameBoard.create();
 
     let player1 = Player("Player 1", "x", "player-1");
-    let player2 = Player("Player 2", "o");
+    // let player2 = Player("Player 2", "o");
+
+    let player2 = ((opponent === "player2") ? Player("Player 2", "o") : console.log("Ai chosen"));
     player1.createPlayerTiles();
     player2.createPlayerTiles();
     let currentPlayer = player1;
@@ -126,4 +146,48 @@ function declareWinner(player) {
     alert(`${player} Won!`)
 };
 
-playGame();
+function getSelectedOpponent(player2Selection, aiSelection) {
+    let selected;
+
+    if (player2Selection.classList.contains("selectedOpponent")) {
+        return selected = "player2";
+    }
+    return selected = "ai";
+};
+
+function startMenuInLoad() {
+
+    //Create all the start menu elements
+    let body = document.querySelector('body');
+    body.appendChild(createElementWithClass("div", "start-menu"));
+    let startMenu = document.querySelector('.start-menu');
+    startMenu.appendChild(createElementWithClassText("div", "menu-heading", "Tic Tac Toe"));
+    startMenu.appendChild(createElementWithClassText("div", "player1-details", "Player 1"));
+    startMenu.appendChild(createElementWithClassText("div", "vs-symbol", "vs"));
+    startMenu.appendChild(createElementWithClass("div", "player2-details"));
+    let player2Details = document.querySelector('.player2-details');
+    player2Details.appendChild(createElementWithClassText("button", "player2-selection", "Player 2"));
+    player2Details.appendChild(createElementWithClassText("button", "ai-selection", "AI"));
+    startMenu.appendChild(createElementWithClassText("button", "start-game", "Start Game"));
+
+    let player2Selection = document.querySelector('.player2-selection');
+    let aiSelection = document.querySelector('.ai-selection');
+    let startGameButton = document.querySelector('.start-game')
+
+    player2Selection.addEventListener('click', () => {
+        aiSelection.classList.remove("selectedOpponent");
+        player2Selection.classList.add("selectedOpponent");
+    });
+
+    aiSelection.addEventListener('click', () => {
+        player2Selection.classList.remove("selectedOpponent");
+        aiSelection.classList.add("selectedOpponent");
+    });
+
+    startGameButton.addEventListener('click', () => {
+        playGame(startMenu, getSelectedOpponent(player2Selection, aiSelection));
+    });
+
+};
+
+startMenuInLoad();
