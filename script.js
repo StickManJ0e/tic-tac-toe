@@ -139,6 +139,7 @@ function checkWin(array) {
     return win;
 };
 
+//Remove the children of a parent element
 function removeChild(parent) {
     let firstChild = parent.firstElementChild;
     while (firstChild) {
@@ -147,24 +148,14 @@ function removeChild(parent) {
     };
 };
 
-function playGame(startMenu, opponent) {
-    //Create Game Board at game start
-    removeChild(startMenu);
-    startMenu.remove();
-    let gameBoard = gameBoardModule();
-    gameBoard.create();
-
+function humanPlayersGame() {
     let player1 = Player("Player 1", "x", "player-1");
-    // let player2 = Player("Player 2", "o");
-
-    let player2 = ((opponent === "player2") ? Player("Player 2", "o", "player-2") : console.log("Ai chosen"));
+    let player2 = Player("Player 2", "o");
     player1.createPlayerTiles();
     player2.createPlayerTiles();
     let currentPlayer = player1;
     selectCurrentPlayer(currentPlayer, player1);
     let squares = document.querySelectorAll('.square');
-
-    //Create eventlisteners for each grid square
     squares.forEach((square) => {
         square.addEventListener('click', () => {
             let squareID = Number(square.id);
@@ -191,6 +182,44 @@ function playGame(startMenu, opponent) {
             return;
         });
     });
+}
+
+function playGame(startMenu, opponent) {
+    //Create Game Board at game start
+    removeChild(startMenu);
+    startMenu.remove();
+    let gameBoard = gameBoardModule();
+    gameBoard.create();
+
+    let gametype = ((opponent === "player2") ? humanPlayersGame() : console.log("Ai chosen"));
+
+    // //Create eventlisteners for each grid square
+    // squares.forEach((square) => {
+    //     square.addEventListener('click', () => {
+    //         let squareID = Number(square.id);
+
+    //         square.textContent = currentPlayer.getMark();
+    //         square.classList.add(String(turnToClass(currentPlayer.getName())));
+    //         square.classList.add('selected-square');
+    //         (currentPlayer.gridMarkArray).push(squareID);
+
+    //         let winState = checkWin(currentPlayer.gridMarkArray);
+    //         console.log(winState);
+    //         if (winState === "tie") {
+    //             declareTie();
+    //             return;
+    //         }
+            
+    //         else if (winState === true) {
+    //             declareWinner(currentPlayer.getName());
+    //             return;
+    //         }
+
+    //         let changeCurrentPlayer = (currentPlayer === player1) ? (currentPlayer = player2) : (currentPlayer = player1);
+    //         selectCurrentPlayer(currentPlayer, player1);
+    //         return;
+    //     });
+    // });
 };
 
 function restartGame(gameBoard, winScreen) {
