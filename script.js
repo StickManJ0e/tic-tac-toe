@@ -41,12 +41,17 @@ let gameBoardModule = () => {
     return { create };
 };
 
+function turnToClass(name) {
+    name = String(name).toLowerCase().split(" ").join("-");
+    return name;
+}
+
 //Create Player Objects
 let Player = (name, mark) => {
     let getName = () => name;
     let getMark = () => mark;
     let gridMarkArray = [];
-    let domClassName = String(name).toLowerCase().split(" ").join("-");
+    let domClassName = turnToClass(name);
     let createPlayerTiles = (() => {
         let body = document.querySelector('body');
         let playerTile = createElementWithClass("div", "player-tile");
@@ -134,7 +139,8 @@ function playGame(startMenu, opponent) {
             let squareID = Number(square.id);
 
             square.textContent = currentPlayer.getMark();
-            square.classList.add('disabled');
+            square.classList.add(String(turnToClass(currentPlayer.getName())));
+            square.classList.add('selected-square');
             (currentPlayer.gridMarkArray).push(squareID);
             console.log(currentPlayer.gridMarkArray);
 
