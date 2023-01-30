@@ -36,7 +36,6 @@ let gameBoardModule = () => {
         //Create the squares in the board
         for (let i = 0; i < (3 ** 2); i++) {
             let square = new Squares(i + 1);
-            console.log(square);
             board.appendChild(square.createSquare());
         };
     });
@@ -73,7 +72,6 @@ function selectCurrentPlayer(currentPlayer, player1) {
     let player2DOM = document.querySelector('.player-2.player-tile');
 
     if (currentPlayer === player1) {
-        console.log("p1 switch");
         player1DOM.classList.remove("inactive-player");
         player1DOM.classList.add("current-player");
         player2DOM.classList.remove("current-player");
@@ -81,7 +79,6 @@ function selectCurrentPlayer(currentPlayer, player1) {
         return;
     }
 
-    console.log("p2 switch");
     player2DOM.classList.remove("inactive-player");
     player2DOM.classList.add("current-player");
     player1DOM.classList.remove("current-player");
@@ -148,69 +145,6 @@ function removeChild(parent) {
         firstChild.remove();
         firstChild = parent.firstElementChild;
     };
-};
-
-function humanPlayersGame() {
-    let player1 = Player("Player 1", "x", "player-1");
-    let player2 = Player("Player 2", "o");
-    player1.createPlayerTiles();
-    player2.createPlayerTiles();
-    let currentPlayer = player1;
-    selectCurrentPlayer(currentPlayer, player1);
-    let squares = document.querySelectorAll('.square');
-    squares.forEach((square) => {
-        square.addEventListener('click', () => {
-            let squareID = Number(square.id);
-
-            square.textContent = currentPlayer.getMark();
-            square.classList.add(String(turnToClass(currentPlayer.getName())));
-            square.classList.add('selected-square');
-            (currentPlayer.gridMarkArray).push(squareID);
-
-            let winState = checkWin(currentPlayer.gridMarkArray);
-            console.log(winState);
-            if (winState === "tie") {
-                declareTie();
-                return;
-            }
-            
-            else if (winState === true) {
-                declareWinner(currentPlayer.getName());
-                return;
-            }
-
-            let changeCurrentPlayer = (currentPlayer === player1) ? (currentPlayer = player2) : (currentPlayer = player1);
-            selectCurrentPlayer(currentPlayer, player1);
-            return;
-        });
-    });
-}
-
-function playGame(startMenu, opponent) {
-    //Create Game Board at game start
-    removeChild(startMenu);
-    startMenu.remove();
-    let gameBoard = gameBoardModule();
-    gameBoard.create();
-
-    //Enable which gamemode based on player2 input
-    let gametype = ((opponent === "player2") ? humanPlayersGame() : console.log("Ai chosen"));
-};
-
-function restartGame(gameBoard, winScreen) {
-    let restartButton = document.querySelector('.restart-button');
-    let playerTiles = document.querySelectorAll('.player-tile');
-    restartButton.addEventListener('click', () => {
-        removeChild(gameBoard);
-        gameBoard.remove();
-        playerTiles.forEach((playerTile) => {
-            removeChild(playerTile);
-            playerTile.remove();
-        })
-        removeChild(winScreen);
-        winScreen.remove();
-        startMenuInLoad();
-    });
 };
 
 function disableGame() {
@@ -300,5 +234,146 @@ function startMenuInLoad() {
     });
 
 };
+
+function humanPlayersGame() {
+    let player1 = Player("Player 1", "x");
+    let player2 = Player("Player 2", "o");
+    player1.createPlayerTiles();
+    player2.createPlayerTiles();
+    let currentPlayer = player1;
+    selectCurrentPlayer(currentPlayer, player1);
+    let squares = document.querySelectorAll('.square');
+    squares.forEach((square) => {
+        square.addEventListener('click', () => {
+            let squareID = Number(square.id);
+
+            square.textContent = currentPlayer.getMark();
+            square.classList.add(String(turnToClass(currentPlayer.getName())));
+            square.classList.add('selected-square');
+            (currentPlayer.gridMarkArray).push(squareID);
+
+            let winState = checkWin(currentPlayer.gridMarkArray);
+            if (winState === "tie") {
+                declareTie();
+                return;
+            }
+            
+            else if (winState === true) {
+                declareWinner(currentPlayer.getName());
+                return;
+            }
+
+            let changeCurrentPlayer = (currentPlayer === player1) ? (currentPlayer = player2) : (currentPlayer = player1);
+            selectCurrentPlayer(currentPlayer, player1);
+            return;
+        });
+    });
+};
+
+function aiGame() {
+    let player1 = Player("Player 1", "x");
+    let player2 = aiPlayer("Player 2", "o");
+    player1.createPlayerTiles();
+    player2.createPlayerTiles();
+    let currentPlayer = player1;
+    selectCurrentPlayer(currentPlayer, player1);
+    let squares = document.querySelectorAll('.square');
+
+    squares.forEach((square) => {
+        square.addEventListener('click', () => {
+            let squareID = Number(square.id);
+    
+            square.textContent = currentPlayer.getMark();
+            square.classList.add(String(turnToClass(currentPlayer.getName())));
+            square.classList.add('selected-square');
+            (currentPlayer.gridMarkArray).push(squareID);
+    
+            let winState = checkWin(currentPlayer.gridMarkArray);
+            if (winState === "tie") {
+                declareTie();
+                return;
+            }
+                
+            else if (winState === true) {
+                declareWinner(currentPlayer.getName());
+                return;
+            }
+    
+            currentPlayer = player2;
+            selectCurrentPlayer(currentPlayer, player1);
+            makeRandomMove(currentPlayer, player1);
+            currentPlayer = player1;
+            selectCurrentPlayer(currentPlayer, player1);
+        });
+    });
+};
+
+function playGame(startMenu, opponent) {
+    //Create Game Board at game start
+    removeChild(startMenu);
+    startMenu.remove();
+    let gameBoard = gameBoardModule();
+    gameBoard.create();
+
+    //Enable which gamemode based on player2 input
+    let gametype = ((opponent === "player2") ? humanPlayersGame() : aiGame());
+};
+
+function restartGame(gameBoard, winScreen) {
+    let restartButton = document.querySelector('.restart-button');
+    let playerTiles = document.querySelectorAll('.player-tile');
+    restartButton.addEventListener('click', () => {
+        removeChild(gameBoard);
+        gameBoard.remove();
+        playerTiles.forEach((playerTile) => {
+            removeChild(playerTile);
+            playerTile.remove();
+        })
+        removeChild(winScreen);
+        winScreen.remove();
+        startMenuInLoad();
+    });
+};
+
+let aiPlayer = (name, mark) => {
+    let getName = () => name;
+    let getMark = () => mark;
+    let gridMarkArray = [];
+    let domClassName = turnToClass(name);
+    let createPlayerTiles = (() => {
+        let body = document.querySelector('body');
+        let playerTile = createElementWithClass("div", "player-tile");
+        playerTile.classList.add(domClassName);
+        playerTile.textContent = name;
+        body.appendChild(playerTile);
+    });
+
+    return { getName, getMark, gridMarkArray, createPlayerTiles };
+};
+
+function makeRandomMove(currentPlayer, player1) {
+    let availableMoves = document.querySelectorAll('.square:not(.selected-square)');
+    let availableMovesArray = Array.from(availableMoves);
+    let randomArrayValue = Math.floor(Math.random() * availableMovesArray.length);
+    let selectedSquare = availableMovesArray[randomArrayValue];
+
+    selectedSquare.textContent = currentPlayer.getMark();
+    selectedSquare.classList.add(String(turnToClass(currentPlayer.getName())));
+    selectedSquare.classList.add('selected-square');
+    (currentPlayer.gridMarkArray).push(Number(selectedSquare.id));
+    console.log(currentPlayer.gridMarkArray);
+    let winState = checkWin(currentPlayer.gridMarkArray);
+    if (winState === "tie") {
+            declareTie();
+            return;
+    }
+        
+    else if (winState === true) {
+        declareWinner(currentPlayer.getName());
+         return;
+    }
+};
+
+
 
 startMenuInLoad();
