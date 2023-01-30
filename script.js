@@ -1,9 +1,11 @@
+//Create an element with class and return element
 function createElementWithClass(elementType, className) {
     let element = document.createElement(elementType);
     element.classList.add(className);
     return element;
 }
 
+//Create an element with class and textContext and return element
 function createElementWithClassText(elementType, className, text) {
     let element = document.createElement(elementType);
     element.classList.add(className);
@@ -22,6 +24,7 @@ function Squares(number) {
     };
 };
 
+//Gameboard Module that creates and appends a gameboard
 let gameBoardModule = () => {
     let create = (() => {
         let body = document.querySelector('body');
@@ -41,6 +44,7 @@ let gameBoardModule = () => {
     return { create };
 };
 
+//Turns something in a class that's properly formatted
 function turnToClass(name) {
     name = String(name).toLowerCase().split(" ").join("-");
     return name;
@@ -84,19 +88,20 @@ function selectCurrentPlayer(currentPlayer, player1) {
     player1DOM.classList.add("inactive-player");
 };
 
+//Checks if all squares on a board are selected
 function checkAllSelected(squares) {
     let gameBoard = document.querySelector('.game-board');
-    let result = false;
+    let selectedResults = false;
     if (gameBoard.children.length === gameBoard.querySelectorAll('.selected-square').length) {
-        result = true;
-        return result;
+        selectedResults = true;
+        return selectedResults;
     }
-    return result;
+    return selectedResults;
 };
 
 //Checks if a player has a winning combination set
 function checkWin(array) {
-    let win = false;
+    let gameState = false;
     let squares = document.querySelectorAll('.squares');
 
     //Create all possible winning combinations into an array
@@ -112,31 +117,28 @@ function checkWin(array) {
     ];
 
     function checkIfWin() {
-        let state = false;
+        let winState = false;
         winningCombinations.some((set) => {
             if (set.every(num => array.includes(num))) {
-                console.log("contains");
-                state = true;
-                return state;
+                winState = true;
+                return winState;
             }
-            console.log("not contains");
             return;
         })
-        return state;
+        return winState;
     };
 
     if  (checkIfWin() === true) {
-        console.log(win);
-        win = true;
-        return win;
+        gameState = true;
+        return gameState;
     }
 
     else if (checkAllSelected(squares) === true && checkIfWin() === false) {
-        win = "tie";
-        return win;
+        gameState = "tie";
+        return gameState;
     }
 
-    return win;
+    return gameState;
 };
 
 //Remove the children of a parent element
@@ -191,35 +193,8 @@ function playGame(startMenu, opponent) {
     let gameBoard = gameBoardModule();
     gameBoard.create();
 
+    //Enable which gamemode based on player2 input
     let gametype = ((opponent === "player2") ? humanPlayersGame() : console.log("Ai chosen"));
-
-    // //Create eventlisteners for each grid square
-    // squares.forEach((square) => {
-    //     square.addEventListener('click', () => {
-    //         let squareID = Number(square.id);
-
-    //         square.textContent = currentPlayer.getMark();
-    //         square.classList.add(String(turnToClass(currentPlayer.getName())));
-    //         square.classList.add('selected-square');
-    //         (currentPlayer.gridMarkArray).push(squareID);
-
-    //         let winState = checkWin(currentPlayer.gridMarkArray);
-    //         console.log(winState);
-    //         if (winState === "tie") {
-    //             declareTie();
-    //             return;
-    //         }
-            
-    //         else if (winState === true) {
-    //             declareWinner(currentPlayer.getName());
-    //             return;
-    //         }
-
-    //         let changeCurrentPlayer = (currentPlayer === player1) ? (currentPlayer = player2) : (currentPlayer = player1);
-    //         selectCurrentPlayer(currentPlayer, player1);
-    //         return;
-    //     });
-    // });
 };
 
 function restartGame(gameBoard, winScreen) {
